@@ -7,8 +7,8 @@ from cryptography.hazmat.primitives import hashes, serialization
 import os
 
 
-IP = "127.0.0.1"
-PORT = 20354
+IP = info["ip"]
+PORT = int(info["port"])
 REGISTER_STATE = 0
 FIND_STATE = 1
 GAME_STATE = 2
