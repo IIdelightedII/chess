@@ -6,6 +6,9 @@ from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import hashes, serialization
 import os
 
+with open(os.path.join(
+   os.path.dirname(__file__), "info.json"), 'r') as f:
+    info = json.load(f)
 
 IP = info["ip"]
 PORT = int(info["port"])

@@ -214,38 +214,42 @@ def main():
         return
 
 
-    try:
-        data = server_socket.accept()
-        client = Client(data[0])
-        text_public_key = public_key.public_bytes(serialization.Encoding.PEM,
-                                                  serialization.PublicFormat.SubjectPublicKeyInfo)
-        print(text_public_key)
-
-
-        clients.append(client)
-        print("подключился пользователь")
-
-        client.start_input_thread(user_input)
-        client.start_analysis_thread(analysis_data)
-        send_message(client, {"code": "60", "key": text_public_key.decode("utf-8"), "message": "был получен ключ"})
-    except Exception as e:
-        print(e)
-
-
-
-
-def start():
-    global exit_event
-    main_thread = threading.Thread(target=main, daemon=True)
-    main_thread.start()
     while True:
-        if exit_event.is_set():
-            print("Done")
-            break
+        try:
+            if exit_event.is_set():
+                break
+            data = server_socket.accept()
+            client = Client(data[0])
+            client.socket.settimeout(0.5)
+            text_public_key = public_key.public_bytes(serialization.Encoding.PEM,
+                                                      serialization.PublicFormat.SubjectPublicKeyInfo)
+            print(text_public_key)
+
+
+            clients.append(client)
+            print("подключился пользователь")
+
+            client.start_input_thread(user_input)
+            client.start_analysis_thread(analysis_data)
+            send_message(client, {"code": "60", "key": text_public_key.decode("utf-8"), "message": "был получен ключ"})
+        except socket.timeout:
+            continue
+        except Exception as e:
+            print(e)
+    print("Done")
+
+
+
+
+
+# def start():
+#     global exit_event
+#     main_thread = threading.Thread(target=main, daemon=True)
+#     main_thread.start()
+#     while True:
+#         if exit_event.is_set():
+#             print("Done")
+#             break
 # d
-while True:
-    print("start")
-    if exit_event.is_set():
-        print("Done")
-        break
-    start()
+
+main()
